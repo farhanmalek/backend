@@ -1,6 +1,7 @@
 
 using backend.Dtos.Account;
 using backend.Interfaces;
+using backend.Mappers;
 using backend.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -88,6 +89,14 @@ namespace backend.Controllers
                 Token = _tokenService.CreateToken(user)
             });
 
+        }
+
+        //Get All Users
+        [HttpGet("users")]
+        public async Task<IActionResult> GetUsers()
+        {
+            var users = await _userManager.Users.Select(user => user.ToGetUserDto()).ToListAsync(); 
+            return Ok(users);
         }
     }
 }

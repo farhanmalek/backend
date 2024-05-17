@@ -1,6 +1,7 @@
 using backend.Data;
 using backend.Interfaces;
 using backend.Models;
+using backend.Repositories;
 using backend.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -17,6 +18,14 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddControllers(); //hook up controllers
 builder.Services.AddScoped<ITokenService, TokenService>(); //hook up token service
+builder.Services.AddScoped<IFriendshipService,FriendshipRepository>();
+
+
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+}); //prevent self referencing loop 
+
 
 //dbconfig
 builder.Services.AddDbContext<ApplicationDBContext>(options => {
