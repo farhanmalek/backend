@@ -19,6 +19,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers(); //hook up controllers
 builder.Services.AddScoped<ITokenService, TokenService>(); //hook up token service
 builder.Services.AddScoped<IFriendshipService,FriendshipRepository>();
+builder.Services.AddScoped<IChatService, ChatRepository>();
 
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>

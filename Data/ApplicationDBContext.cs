@@ -16,6 +16,7 @@ namespace backend.Data
         public DbSet<Message> Messages { get; set; }
         public DbSet<Chat> Chats { get; set; }
         public DbSet<Friendship> Friendships { get; set; }
+        public DbSet<UserChat> UserChats {get;set;}
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -23,15 +24,18 @@ namespace backend.Data
             base.OnModelCreating(builder);
 
             //Configure the relationships between the tables
-            builder.Entity<Chat>()
-                .HasOne<User>()
-                .WithMany(u => u.Chats)
-                .HasForeignKey(c => c.User1Id);
+            builder.Entity<UserChat>()
+            .HasKey(uc => new { uc.UserId, uc.ChatId });
 
-            builder.Entity<Chat>()
-                .HasOne<User>()
-                .WithMany(u => u.Chats)
-                .HasForeignKey(c => c.User2Id);
+        builder.Entity<UserChat>()
+            .HasOne(uc => uc.User)
+            .WithMany(u => u.UserChats)
+            .HasForeignKey(uc => uc.UserId);
+
+        builder.Entity<UserChat>()
+            .HasOne(uc => uc.Chat)
+            .WithMany(c => c.UserChats)
+            .HasForeignKey(uc => uc.ChatId);
 
             builder.Entity<Friendship>()
            .HasOne(f => f.User1)
