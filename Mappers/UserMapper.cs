@@ -12,7 +12,6 @@ namespace backend.Mappers
             return new GetUserDto {
                 UserId = userModel.Id,
                 UserName = userModel.UserName,
-                Email = userModel.Email
             };
         }
 
@@ -21,7 +20,7 @@ namespace backend.Mappers
             return new User {
                 Id = userDto.UserId!,
                 UserName = userDto.UserName,
-                Email = userDto.Email
+            
             };
         }
     }
