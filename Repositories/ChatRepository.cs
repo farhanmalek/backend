@@ -85,10 +85,10 @@ namespace backend.Repositories
 
 
         //get chat by id, ie when i click on a chat it will pop up in the component
-        public async Task<Chat> GetChatById(int chatId)
+        public async Task<Chat?> GetChatById(int chatId)
         {
             var singleChat = await _context.Chats.FirstOrDefaultAsync(c => c.Id == chatId);
-
+//eager load the nested properties
               _context.Entry(singleChat!).Collection(c => c.UserChats).Load();
 
             foreach (var userChat in singleChat!.UserChats)

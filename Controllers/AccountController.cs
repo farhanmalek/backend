@@ -3,6 +3,7 @@ using backend.Dtos.Account;
 using backend.Interfaces;
 using backend.Mappers;
 using backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -93,9 +94,10 @@ namespace backend.Controllers
 
         //Get All Users
         [HttpGet("users")]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetUsers([FromQuery] string searchInput)
         {
-            var users = await _userManager.Users.Select(user => user.ToGetUserDto()).ToListAsync(); 
+            var users = await _userManager.Users.Where(user => user.UserName.Contains(searchInput)).
+            Select(user => user.ToGetUserDto()).ToListAsync(); 
             return Ok(users);
         }
     }

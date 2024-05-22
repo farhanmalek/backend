@@ -26,11 +26,18 @@ namespace backend.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetFriendsOfUser()
+        public async Task<IActionResult> GetFriendsOfUser([FromQuery] string? searchInput = null)
         {
             var userName = User.GetUserName(); //use the claim to get signed in users user name
             var user = await _userManager.FindByNameAsync(userName);
             var friendsOfUser = await _friendshipRepo.GetFriends(user!);
+            //so now I have a list of users that are friends of the user
+            if (!string.IsNullOrEmpty(searchInput)) {
+                //if there is no search input, return all friends
+                var searchedFriend = friendsOfUser.Where(u => u.UserName.Contains(searchInput));
+                var searchResponse = searchedFriend.Select(u => u.ToGetUserDto());
+                return Ok(searchResponse);
+            }
 
             var response = friendsOfUser.Select(u => u.ToGetUserDto());
 
