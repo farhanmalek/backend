@@ -12,6 +12,8 @@ namespace backend.Interfaces
         Task<List<User>> GetFriends(User user);
         Task<Friendship> SendFriendRequest(User user1, User user2);
         Task<Friendship>? HandleFriendRequest(User user1, User user2,string action);
+        Task<Friendship?> GetFriendshipStatus(User user1, User user2);
+        Task<List<User>> GetFriendRequests(User user);
 
     }
 }

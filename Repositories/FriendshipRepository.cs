@@ -62,7 +62,7 @@ namespace backend.Repositories
 
             // Query the database for friendships where the user is either User1 or User2
             var friendships = await _context.Friendships
-                .Where(f => f.User1Id == userId || f.User2Id == userId)
+                .Where(f => (f.User1Id == userId || f.User2Id == userId) && f.Status == FriendshipStatus.Accepted)
                 .Include(f => f.User1) // Eagerly load User1
                 .Include(f => f.User2) // Eagerly load User2
                 .ToListAsync();
@@ -118,5 +118,47 @@ namespace backend.Repositories
                 throw;
             }
         }
+
+        //create new service to get back the friendship status between two users
+        public async Task<Friendship?> GetFriendshipStatus(User user1, User user2)
+        {
+            try
+            {
+                // Check if the friendship exists
+                var existingFriendship = await _context.Friendships.FirstOrDefaultAsync(f =>
+                    (f.User1Id == user1.Id && f.User2Id == user2.Id) ||
+                    (f.User1Id == user2.Id && f.User2Id == user1.Id));
+
+                //return the status of the friendship
+                if (existingFriendship == null)
+                {
+                    return null;
+                }
+
+                return existingFriendship;
+
+            }
+            catch (Exception e)
+            {
+                // Log the exception
+                Console.WriteLine(e.Message);
+                throw;
+            }
+        }
+
+        //create new service to get back the friend requests
+        public async Task<List<User>> GetFriendRequests(User user)
+        {
+            var userId = user.Id;
+
+            // Query the database for friendships where the user is the receiver and the status is pending
+            var pendingFriendRequests = await _context.Friendships
+                .Where(f => f.User2Id == userId && f.Status == FriendshipStatus.Pending)
+                .Select(f => f.User1) // Select the users who sent the friend requests
+                .ToListAsync();
+
+            return pendingFriendRequests;
+        }
+
     }
 }

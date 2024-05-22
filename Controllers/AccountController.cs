@@ -84,7 +84,8 @@ namespace backend.Controllers
             }
 
             return Ok(new NewUserDto
-            {
+            {   
+                Id = user.Id,
                 UserName = user.UserName!,
                 Email = user.Email!,
                 Token = _tokenService.CreateToken(user)

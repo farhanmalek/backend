@@ -78,11 +78,47 @@ namespace backend.Controllers
 
             if (updatedFriendShip == null)
             {
-                return BadRequest("Friendship doesnt exist");
+                return NotFound("Friendship doesnt exist");
             } 
 
             return Ok();
 
+        }
+
+        [HttpPost("status")]
+        [Authorize]
+        public async Task<IActionResult> getFriendshipStatus([FromBody] GetUserDto user2)
+        {
+            var loggedInUser = User.GetUserName();
+            var loggedInUserUsername = await _userManager.FindByNameAsync(loggedInUser);
+
+            var existingFriendship = await _friendshipRepo.GetFriendshipStatus(loggedInUserUsername!, user2.ToUserFromGetUserDto());
+
+            if (existingFriendship == null)
+            {
+                return Ok("Friendship doesnt exist");
+            } 
+
+            return Ok(existingFriendship.Status.ToString());
+        }
+
+        [HttpGet("requests")]
+        [Authorize]
+        public async Task<IActionResult> getFriendRequests()
+        {
+            var loggedInUser = User.GetUserName();
+            var loggedInUserUsername = await _userManager.FindByNameAsync(loggedInUser);
+
+            var friendRequests = await _friendshipRepo.GetFriendRequests(loggedInUserUsername!);
+
+            if (friendRequests == null)
+            {
+                return Ok("No friend requests");
+            } 
+
+            var response = friendRequests.Select(f => f.ToGetUserDto());
+
+            return Ok(response); 
         }
 
 
