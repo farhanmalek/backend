@@ -11,7 +11,10 @@ namespace backend.Dtos.Account
         
         public string? UserId { get; set; }
         public string? UserName {get; set;}
-        
-        
+
+        public static implicit operator string(GetUserDto v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

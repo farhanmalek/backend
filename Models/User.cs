@@ -7,5 +7,6 @@ namespace backend.Models
     {
         public List<Friendship> Friendships { get; set; } = new List<Friendship>();
         public List<UserChat> UserChats { get; set; } = new List<UserChat>();
+        public List<Message> Messages { get; set; } = new List<Message>();
     }
 }

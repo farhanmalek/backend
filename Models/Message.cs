@@ -1,5 +1,5 @@
-
-
+using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Models
@@ -7,22 +7,22 @@ namespace backend.Models
     public class Message
     {
         public int Id { get; set; }
-        public string? Content { get; set; }
-        public DateTime SentAt { get; set; } = DateTime.Now;
-        //Foreign Key
-        [ForeignKey("Sender")]
-        public string SenderId { get; set; }
-      
-        //Foreign Key
-        [ForeignKey("Receiver")]
-        public string ReceiverId { get; set; }
-      
 
-        //Foreign Key
+        [Required]
+        public string? Content { get; set; }
+
+        public DateTime SentAt { get; set; } = DateTime.Now;
+
+        // Foreign Key
+        [ForeignKey("Messenger")]
+        public string MessengerId { get; set; }
+
+        // Foreign Key
         [ForeignKey("Chat")]
         public int ChatId { get; set; }
-        //Navigation Property
-        public Chat? Chat { get; set; }
-        
+
+        // Navigation Properties
+        public virtual Chat Chat { get; set; }
+        public virtual User Messenger { get; set; }
     }
 }

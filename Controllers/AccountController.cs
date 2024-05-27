@@ -1,5 +1,6 @@
 
 using backend.Dtos.Account;
+using backend.Extensions;
 using backend.Interfaces;
 using backend.Mappers;
 using backend.Models;
@@ -97,7 +98,8 @@ namespace backend.Controllers
         [HttpGet("users")]
         public async Task<IActionResult> GetUsers([FromQuery] string searchInput)
         {
-            var users = await _userManager.Users.Where(user => user.UserName.Contains(searchInput)).
+            var loggedInUser = User.GetUserName();
+            var users = await _userManager.Users.Where(user => user.UserName.Contains(searchInput) && user.UserName != loggedInUser).
             Select(user => user.ToGetUserDto()).ToListAsync(); 
             return Ok(users);
         }

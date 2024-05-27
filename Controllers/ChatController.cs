@@ -16,10 +16,14 @@ namespace backend.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly IChatService _chatRepo;
-        public ChatController(UserManager<User> userManager, IChatService chatRepo)
+        private readonly IMessageService _messageRepo;
+        public ChatController(UserManager<User> userManager, IChatService chatRepo, IMessageService messageRepo)
+
         {
             _chatRepo = chatRepo;
             _userManager = userManager;
+            _messageRepo = messageRepo;
+
         }
 
         //Get chats for a logged in user
@@ -73,6 +77,7 @@ namespace backend.Controllers
             return Ok(newChat.MapToGetChatDto());
         }
 
+//edit chatname by id
         [HttpPut("{id:int}")]
         [Authorize]
 
@@ -89,7 +94,24 @@ namespace backend.Controllers
 
         }
 
+//get all messages in a chat by its id
 
+        [HttpGet("{id:int}/messages")]
+        [Authorize]
+
+        public async Task<IActionResult> GetMessagesByChatId(int id)
+        {
+            var messages = await _messageRepo.GetMessages(id);
+
+            if (messages == null)
+            {
+                return Ok("No messages found");
+            }
+
+            var formattedMessages = messages.Select(m => m.MapToSendMessageDto());
+
+            return Ok(formattedMessages);
+        }
         
     }
 }

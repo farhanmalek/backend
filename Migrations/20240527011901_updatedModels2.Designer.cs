@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using backend.Data;
 
@@ -11,9 +12,11 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20240527011901_updatedModels2")]
+    partial class updatedModels2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,13 +54,13 @@ namespace backend.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "f725c0a7-eabe-4019-84c4-5eb49ce9881c",
+                            Id = "aee3aaaa-e199-4aaa-b0a2-89ebad0a6a32",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "39262317-3aca-4d96-b879-c4590c806c91",
+                            Id = "505fcffc-44db-47b5-90b1-edde14368629",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -200,11 +203,9 @@ namespace backend.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("User1Id")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("User2Id")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("FriendShipId");
@@ -228,10 +229,13 @@ namespace backend.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Content")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("MessengerId")
+                    b.Property<string>("ReceiverId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SenderId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
@@ -242,7 +246,9 @@ namespace backend.Migrations
 
                     b.HasIndex("ChatId");
 
-                    b.HasIndex("MessengerId");
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderId");
 
                     b.ToTable("Messages");
                 });
@@ -383,14 +389,12 @@ namespace backend.Migrations
                     b.HasOne("backend.Models.User", "User1")
                         .WithMany("Friendships")
                         .HasForeignKey("User1Id")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("backend.Models.User", "User2")
                         .WithMany()
                         .HasForeignKey("User2Id")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("User1");
 
@@ -405,15 +409,19 @@ namespace backend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("backend.Models.User", "Messenger")
-                        .WithMany("Messages")
-                        .HasForeignKey("MessengerId")
+                    b.HasOne("backend.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Chat");
-
-                    b.Navigation("Messenger");
                 });
 
             modelBuilder.Entity("backend.Models.UserChat", b =>
@@ -445,8 +453,6 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Models.User", b =>
                 {
                     b.Navigation("Friendships");
-
-                    b.Navigation("Messages");
 
                     b.Navigation("UserChats");
                 });

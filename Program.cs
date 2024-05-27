@@ -1,4 +1,5 @@
 using backend.Data;
+using backend.Hubs;
 using backend.Interfaces;
 using backend.Models;
 using backend.Repositories;
@@ -16,10 +17,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Add signalr
+builder.Services.AddSignalR();
+
 builder.Services.AddControllers(); //hook up controllers
 builder.Services.AddScoped<ITokenService, TokenService>(); //hook up token service
 builder.Services.AddScoped<IFriendshipService,FriendshipRepository>();
 builder.Services.AddScoped<IChatService, ChatRepository>();
+builder.Services.AddScoped<IMessageService, MessageRepository>();
 
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
@@ -128,6 +133,9 @@ app.UseHttpsRedirection();
 app.UseCors("AllowSpecificOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
+
+//setup signalr hub
+app.MapHub<ChatHub>("/chat");
 
 
 

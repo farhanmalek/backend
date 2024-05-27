@@ -26,23 +26,27 @@ namespace backend.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetFriendsOfUser([FromQuery] string? searchInput = null)
+        public async Task<IActionResult> GetFriendsOfUser([FromQuery] string? searchInput)
         {
-            var userName = User.GetUserName(); //use the claim to get signed in users user name
+            var userName = User.GetUserName(); //use the claim to get signed in user's username
             var user = await _userManager.FindByNameAsync(userName);
             var friendsOfUser = await _friendshipRepo.GetFriends(user!);
-            //so now I have a list of users that are friends of the user
-            if (!string.IsNullOrEmpty(searchInput)) {
-                //if there is no search input, return all friends
-                var searchedFriend = friendsOfUser.Where(u => u.UserName.Contains(searchInput));
-                var searchResponse = searchedFriend.Select(u => u.ToGetUserDto());
+
+            // Check if searchInput is not null or empty and perform a case-insensitive search
+            if (!string.IsNullOrEmpty(searchInput))
+            {
+                var lowerCaseSearchInput = searchInput.ToLower(); // Convert search input to lowercase
+
+                // Perform case-insensitive search by converting usernames to lowercase
+                var searchedFriends = friendsOfUser.Where(u => u.UserName!.ToLower().Contains(lowerCaseSearchInput));
+                var searchResponse = searchedFriends.Select(u => u.ToGetUserDto());
                 return Ok(searchResponse);
             }
 
             var response = friendsOfUser.Select(u => u.ToGetUserDto());
-
             return Ok(response);
         }
+
 
         [HttpPost("send")]
         [Authorize]
@@ -58,7 +62,7 @@ namespace backend.Controllers
             if (createdFriendship == null)
             {
                 return BadRequest("Error sending friend request");
-            } 
+            }
 
 
             return Ok();
@@ -69,7 +73,7 @@ namespace backend.Controllers
         [Authorize]
 
         public async Task<IActionResult> HandleFriendRequestByUser([FromBody] GetUserDto requestSender, string action)
-        { 
+        {
             //Current person logged in will generally be accepting
             var userNameOfReceiver = User.GetUserName();
             var requestReceiver = await _userManager.FindByNameAsync(userNameOfReceiver);
@@ -79,7 +83,7 @@ namespace backend.Controllers
             if (updatedFriendShip == null)
             {
                 return NotFound("Friendship doesnt exist");
-            } 
+            }
 
             return Ok();
 
@@ -97,7 +101,7 @@ namespace backend.Controllers
             if (existingFriendship == null)
             {
                 return Ok("Friendship doesnt exist");
-            } 
+            }
 
             return Ok(existingFriendship.Status.ToString());
         }
@@ -114,16 +118,16 @@ namespace backend.Controllers
             if (friendRequests == null)
             {
                 return Ok("No friend requests");
-            } 
+            }
 
             var response = friendRequests.Select(f => f.ToGetUserDto());
 
-            return Ok(response); 
+            return Ok(response);
         }
 
 
-        
-       
-        
+
+
+
     }
 }
