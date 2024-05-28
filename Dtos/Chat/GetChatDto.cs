@@ -12,7 +12,7 @@ namespace backend.Dtos.Chat
     {
     public int Id { get; set; }
     public string? Name { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    // public DateTime CreatedAt { get; set; } = DateTime.Now;
     // Foreign keys
     public List<GetUserDto> Participants { get; set; }
     public List<SendMessageDtoToClient> Messages { get; set; }

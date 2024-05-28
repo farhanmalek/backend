@@ -14,7 +14,7 @@ namespace backend.Mappers
             {
                 Id = chat.Id,
                 Name = chat.Name,
-                CreatedAt = chat.CreatedAt,
+                // CreatedAt = chat.CreatedAt,
                 Participants = chat.UserChats
                     .Where(uc => uc.User != null) // Ensure User is not null
                     .Select(uc => new GetUserDto
