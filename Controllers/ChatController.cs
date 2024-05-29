@@ -62,7 +62,7 @@ namespace backend.Controllers
 
         public async Task<IActionResult> CreateNewChat([FromBody] List<GetUserDto> chatParticipants)
         {
-            System.Console.WriteLine("Hello");
+
             var participants = chatParticipants.Select(cp => cp.ToUserFromGetUserDto()).ToList();
             var chatCreator = User.GetUserName();
             var newChatCreator = await _userManager.FindByNameAsync(chatCreator);
@@ -82,8 +82,9 @@ namespace backend.Controllers
         [HttpPut("{id:int}")]
         [Authorize]
 
-        public async Task<IActionResult> EditChatNameById([FromQuery]int id,[FromBody] string newChatName)
+        public async Task<IActionResult> EditChatNameById([FromRoute]int id,[FromQuery] string newChatName)
         {
+            System.Console.WriteLine(newChatName);
             var editedChat = await _chatRepo.EditChatName(newChatName, id);
 
             if (editedChat == null)
@@ -100,7 +101,7 @@ namespace backend.Controllers
         [HttpGet("{id:int}/messages")]
         [Authorize]
 
-        public async Task<IActionResult> GetMessagesByChatId(int id)
+        public async Task<IActionResult> GetMessagesByChatId([FromRoute] int id)
         {
             var messages = await _messageRepo.GetMessages(id);
 

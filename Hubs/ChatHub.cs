@@ -2,7 +2,7 @@
 using backend.Dtos.Account;
 using backend.Dtos.Message;
 using backend.Interfaces;
-using backend.Models;
+
 using Microsoft.AspNetCore.SignalR;
 
 namespace backend.Hubs

@@ -26,7 +26,6 @@ namespace backend.Mappers
                     .Select(m => new SendMessageDtoToClient
                     {
                         ChatId = m.ChatId,
-                        SenderId = m.MessengerId,
                         Sender = new GetUserDto
                         {
                             UserId = m.MessengerId,

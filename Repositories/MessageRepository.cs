@@ -17,7 +17,7 @@ namespace backend.Repositories
         //Get all the messages from a chat
         public async Task<List<Message>> GetMessages(int chatId)
         {
-            return await _context.Messages.Where(m => m.ChatId == chatId).ToListAsync();
+            return await _context.Messages.Include(m => m.Messenger).Where(m => m.ChatId == chatId).ToListAsync();
         }
 
         //save a message to the database
@@ -27,7 +27,8 @@ namespace backend.Repositories
             {
                 ChatId = chatId,
                 MessengerId = senderId,
-                Content = content
+                Content = content,
+                SentAt = DateTime.Now
             };
             _context.Messages.Add(message);
             return _context.SaveChangesAsync();

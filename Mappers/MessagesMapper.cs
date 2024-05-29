@@ -13,7 +13,6 @@ namespace backend.Mappers
             return new GetMessageDtoFromClient
             {
                 ChatId = message.ChatId,
-                SenderId = message.MessengerId,
                 Sender = new GetUserDto {
                     UserId = message.Messenger.Id,
                     UserName = message.Messenger.UserName
@@ -28,9 +27,8 @@ namespace backend.Mappers
             return new SendMessageDtoToClient
             {
                 ChatId = message.ChatId,
-                SenderId = message.MessengerId,
                 Sender = new GetUserDto {
-                    UserId = message.Messenger.Id,
+                    UserId = message.MessengerId,
                     UserName = message.Messenger.UserName
                 },
                 Content = message.Content,
