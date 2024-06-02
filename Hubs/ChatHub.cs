@@ -8,7 +8,7 @@ namespace backend.Hubs
     public class ChatHub : Hub
     {
         private readonly IMessageService _messageService;
-        
+
         public ChatHub(IMessageService messageService)
         {
             _messageService = messageService;
@@ -16,14 +16,26 @@ namespace backend.Hubs
 
         public override async Task OnConnectedAsync()
         {
-            // Assuming the chatId is passed as a query string parameter
             var chatId = Context.GetHttpContext().Request.Query["chatId"];
             if (!string.IsNullOrEmpty(chatId))
             {
                 await Groups.AddToGroupAsync(Context.ConnectionId, chatId);
-                await base.OnConnectedAsync();
             }
+            await base.OnConnectedAsync();
         }
+
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            var chatId = Context.GetHttpContext().Request.Query["chatId"];
+            if (!string.IsNullOrEmpty(chatId))
+            {
+                await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatId);
+            }
+            await base.OnDisconnectedAsync(exception);
+        }
+
+
+
 
         public async Task SendMessageByChatId(GetUserDto user, GetMessageDtoFromClient message, int chatId)
         {
