@@ -12,13 +12,17 @@ namespace backend.Repositories
         public MessageRepository(ApplicationDBContext context)
         {
             _context = context;
-            
+
         }
         //Get all the messages from a chat
         public async Task<List<Message>> GetMessages(int chatId)
         {
-            return await _context.Messages.Include(m => m.Messenger).Where(m => m.ChatId == chatId).ToListAsync();
+            return await _context.Messages
+                .Include(m => m.Messenger)
+                .Where(m => m.ChatId == chatId)
+                .ToListAsync();
         }
+
 
         //save a message to the database
         public Task SaveMessage(int chatId, string senderId, string content)
