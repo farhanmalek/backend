@@ -8,10 +8,12 @@ namespace backend.Hubs
     public class ChatHub : Hub
     {
         private readonly IMessageService _messageService;
+        private readonly IHubContext<AllChatHub> _allChatHubContext;
 
-        public ChatHub(IMessageService messageService)
+        public ChatHub(IMessageService messageService, IHubContext<AllChatHub> allChatHubContext)
         {
             _messageService = messageService;
+            _allChatHubContext = allChatHubContext;
         }
 
         public override async Task OnConnectedAsync()
@@ -41,6 +43,7 @@ namespace backend.Hubs
         {
             await _messageService.SaveMessage(chatId, user.UserId, message.Content!);
             await Clients.Group(chatId.ToString()).SendAsync("ReceiveMessageByChatId", user, message);
+            await _allChatHubContext.Clients.Group("ChatCards").SendAsync("ReceiveLastMessageUpdate", chatId, message);
         }
     }
 }

@@ -27,6 +27,7 @@ builder.Services.AddScoped<IChatService, ChatRepository>();
 builder.Services.AddScoped<IMessageService, MessageRepository>();
 
 
+
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
@@ -136,6 +137,7 @@ app.UseAuthorization();
 
 //setup signalr hub
 app.MapHub<ChatHub>("/chat");
+app.MapHub<AllChatHub>("/allchat");
 
 
 
