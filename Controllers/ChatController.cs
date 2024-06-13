@@ -1,12 +1,14 @@
 
 using backend.Dtos.Account;
 using backend.Extensions;
+using backend.Hubs;
 using backend.Interfaces;
 using backend.Mappers;
 using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace backend.Controllers
 {
@@ -17,12 +19,15 @@ namespace backend.Controllers
         private readonly UserManager<User> _userManager;
         private readonly IChatService _chatRepo;
         private readonly IMessageService _messageRepo;
-        public ChatController(UserManager<User> userManager, IChatService chatRepo, IMessageService messageRepo)
+        private readonly IHubContext<CreatedChatsHub> _createdChatsHubContext;
+        public ChatController(UserManager<User> userManager, IChatService chatRepo, IMessageService messageRepo, IHubContext<CreatedChatsHub> createdChatsHubContext)
+
 
         {
             _chatRepo = chatRepo;
             _userManager = userManager;
             _messageRepo = messageRepo;
+            _createdChatsHubContext = createdChatsHubContext;
 
         }
 
@@ -75,7 +80,13 @@ namespace backend.Controllers
                 return BadRequest("Error creating new chat");
             }
 
-            return Ok(newChat.MapToGetChatDto());
+            //send to the hub
+             foreach (var userId in participants.Select(p => p.Id))
+            {
+                await _createdChatsHubContext.Clients.Group(userId).SendAsync("NewChatCreated", newChat.MapToGetChatDto());
+            }
+
+            return Ok();
         }
 
 //edit chatname by id

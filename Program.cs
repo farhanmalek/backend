@@ -138,6 +138,7 @@ app.UseAuthorization();
 //setup signalr hub
 app.MapHub<ChatHub>("/chat");
 app.MapHub<AllChatHub>("/allchat");
+app.MapHub<CreatedChatsHub>("/createdchats");
 
 
 

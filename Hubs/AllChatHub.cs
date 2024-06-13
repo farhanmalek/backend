@@ -27,9 +27,6 @@ namespace backend.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
-        public async Task NotifyLastMessageUpdated(int chatId, GetMessageDtoFromClient message)
-        {
-            await Clients.Group("ChatCards").SendAsync("ReceiveLastMessageUpdate", chatId, message);
-        }
+    
     }
 }
