@@ -1,12 +1,14 @@
 
 using backend.Dtos.Account;
 using backend.Extensions;
+using backend.Hubs;
 using backend.Interfaces;
 using backend.Mappers;
 using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace backend.Controllers
 {
@@ -17,11 +19,13 @@ namespace backend.Controllers
 
         private readonly UserManager<User> _userManager;
         private readonly IFriendshipService _friendshipRepo;
+        private readonly IHubContext<FriendHub> _friendHubContext;
 
-        public FriendshipController(UserManager<User> userManager, IFriendshipService friendshipRepo)
+        public FriendshipController(UserManager<User> userManager, IFriendshipService friendshipRepo, IHubContext<FriendHub> friendHubContext)
         {
             _userManager = userManager;
             _friendshipRepo = friendshipRepo;
+            _friendHubContext = friendHubContext;
         }
 
         [HttpGet]
@@ -64,6 +68,9 @@ namespace backend.Controllers
                 return BadRequest("Error sending friend request");
             }
 
+            //send notification to the receiver
+            await _friendHubContext.Clients.Group(requestReceiver!.UserId!).SendAsync("ReceiveFriendRequest", requestSender!.ToGetUserDto());
+
 
             return Ok();
 
@@ -84,6 +91,11 @@ namespace backend.Controllers
             {
                 return NotFound("Friendship doesnt exist");
             }
+            if (action == "accept")
+            {
+                 await _friendHubContext.Clients.Group(requestSender.UserId!).SendAsync("Response", requestReceiver!.ToGetUserDto());
+            }
+
 
             return Ok();
 
@@ -121,6 +133,7 @@ namespace backend.Controllers
             }
 
             var response = friendRequests.Select(f => f.ToGetUserDto());
+
 
             return Ok(response);
         }

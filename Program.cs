@@ -139,6 +139,7 @@ app.UseAuthorization();
 app.MapHub<ChatHub>("/chat");
 app.MapHub<AllChatHub>("/allchat");
 app.MapHub<CreatedChatsHub>("/createdchats");
+app.MapHub<FriendHub>("/friend");
 
 
 
