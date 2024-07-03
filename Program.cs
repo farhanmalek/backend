@@ -109,6 +109,8 @@ builder.Services.AddSwaggerGen(option =>
 
 
 
+var allowedOrigins = builder.Configuration["CorsSettings:AllowedOrigins"]!.ToString();;
+System.Console.WriteLine(allowedOrigins.GetType());
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin", builder =>
@@ -116,7 +118,8 @@ builder.Services.AddCors(options =>
         builder.AllowAnyMethod()
                .AllowAnyHeader()
                .AllowCredentials()
-               .WithOrigins("http://localhost:3000");
+               .WithOrigins(allowedOrigins!)
+               .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
     });
 });
 
